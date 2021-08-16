@@ -7,16 +7,18 @@ import 'package:untitled/screens/home/components/body.dart';
 class homeScreen extends StatelessWidget {
   const homeScreen({Key? key}) : super(key: key);
 
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: buildAppBar(),
+      appBar: buildAppBar(context),
       body: Body(),
     );
   }
 
-  AppBar buildAppBar() {
+  AppBar buildAppBar(BuildContext context) {
     return AppBar(
       backgroundColor: Colors.teal,
       elevation: 0,

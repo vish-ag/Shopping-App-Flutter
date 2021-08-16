@@ -6,7 +6,8 @@ import 'package:untitled/screens/home/components/body.dart';
 import 'package:untitled/screens/home/home_screen.dart';
 
 class Welcome extends StatefulWidget {
-  const Welcome({Key? key}) : super(key: key);
+  const Welcome( {Key? key}) : super(key: key);
+
 
   @override
   _WelcomeState createState() => _WelcomeState(
@@ -15,6 +16,8 @@ class Welcome extends StatefulWidget {
 
 class _WelcomeState extends State<Welcome> {
   User? currentUser = FirebaseAuth.instance.currentUser;
+
+  _WelcomeState();
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<String>>(

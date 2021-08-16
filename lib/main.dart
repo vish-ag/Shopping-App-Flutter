@@ -2,6 +2,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:untitled/Authentication2/register_page.dart';
 import 'package:untitled/constants.dart';
 import 'package:untitled/screens/home/components/welcome_screen.dart';
@@ -43,7 +44,9 @@ class AuthStart extends StatelessWidget {
           return LandingPage();
         }
 
-        return CircularProgressIndicator();
+        return SpinKitDualRing(
+          color: Colors.purple,
+        );
       },
     );
   }
@@ -67,7 +70,9 @@ class LandingPage extends StatelessWidget {
         } else {
           return Scaffold(
             body: Center(
-              child: CircularProgressIndicator(),
+              child: SpinKitDualRing(
+                color: Colors.purple,
+              ),
             ),
           );
         }

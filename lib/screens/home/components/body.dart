@@ -17,53 +17,17 @@ class Body extends StatefulWidget {
 }
 
 class _BodyState extends State<Body> {
+  // @override
+  // void initState(){
+  //   super.initState();
+  // }
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Categories(),
-        FutureBuilder<List>(
-          future: ProductList(categories[selectedIndex]).getData(),
-          // future: ProductList("Men's Clothing").getData(),
-          builder: (context, AsyncSnapshot snapshot){
-            if(snapshot.hasData){
-              prod = snapshot.data!;
-              // prod = snapshot.data!.toList<Product1>();
-              return
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: kDefaultPaddin),
-                    child: GridView.builder(
-                      itemCount: snapshot.data!.length,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        mainAxisSpacing: kDefaultPaddin,
-                        crossAxisSpacing: kDefaultPaddin,
-                        crossAxisCount: 2,
-                        childAspectRatio: 0.75,
-                      ),
-                      itemBuilder: (context, index) => ItemCard(
-                        product: prod[index],
-                        press: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                DetailsScreen(product: prod[index]/*prod[index]*/))),
-                      ),
-                    ),
-
-                  ),
-                );
-            }
-            else{
-              return Center(
-                child: SpinKitCubeGrid(
-                  color: Colors.black,
-                ),
-              );
-            }
-          },
-        ),
+        buildProductList(),
       ],
     );
   }
@@ -73,50 +37,115 @@ class _BodyState extends State<Body> {
   Widget Categories() {
     return Container(
       height: 75,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: kDefaultPaddin),
-        child: SizedBox(
-          height: 25,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: categories.length,
-            itemBuilder: (context, index) => buildCategories(index),
-          ),
-
+      child: SizedBox(
+        height: 25,
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: categories.length,
+          itemBuilder: (context, index) => buildCategories(index),
         ),
+
       ),
     );
   }
 
   Widget buildCategories(int index) {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          selectedIndex = index;
-          // context;
-        });
-      },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: kDefaultPaddin-5),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              categories[index].toUpperCase(),
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: selectedIndex==index? kTextColor: kTextLightColor,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: kDefaultPaddin),
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            selectedIndex = index;
+            // context;
+          });
+          // Navigator.pop(context);
+          //
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(
+          //       builder: (context) => homeScreen()
+          //   ),
+          // );
+          // Navigator.pushReplacement(
+          //     context,
+          //     MaterialPageRoute(
+          //       builder:(context) => homeScreen(),
+          //     ),
+          // );
+        },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: kDefaultPaddin-5),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                categories[index].toUpperCase(),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: selectedIndex==index? kTextColor: kTextLightColor,
+                ),
               ),
-            ),
-            Container(
-              height: 2,
-              width: 30,
-              color: selectedIndex== index ? Colors.black: Colors.transparent,
-              margin: EdgeInsets.only(top: kDefaultPaddin/4),
-            )
-          ],
+              Container(
+                height: 2,
+                width: 30,
+                color: selectedIndex== index ? Colors.black: Colors.transparent,
+                margin: EdgeInsets.only(top: kDefaultPaddin/4),
+              )
+            ],
+          ),
         ),
       ),
+    );
+  }
+}
+
+class buildProductList extends StatelessWidget {
+  const buildProductList({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List>(
+      future: ProductList(categories[selectedIndex]).getData(),
+      // future: ProductList("Men's Clothing").getData(),
+      builder: (context, AsyncSnapshot snapshot){
+        if(snapshot.hasData){
+          prod = snapshot.data!;
+          // prod = snapshot.data!.toList<Product1>();
+          return
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: kDefaultPaddin),
+                child: GridView.builder(
+                  itemCount: snapshot.data!.length,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    mainAxisSpacing: kDefaultPaddin,
+                    crossAxisSpacing: kDefaultPaddin,
+                    crossAxisCount: 2,
+                    childAspectRatio: 0.75,
+                  ),
+                  itemBuilder: (context, index) => ItemCard(
+                    product: prod[index],
+                    press: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                            DetailsScreen(product: prod[index]/*prod[index]*/))),
+                  ),
+                ),
+
+              ),
+            );
+        }
+        else{
+          return Center(
+            child: SpinKitCubeGrid(
+              color: Colors.black,
+            ),
+          );
+        }
+      },
     );
   }
 }
