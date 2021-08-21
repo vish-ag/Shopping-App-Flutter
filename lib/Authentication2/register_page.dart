@@ -14,7 +14,7 @@ class Register extends StatefulWidget {
 class _RegisterState extends State<Register> {
   final _auth = FirebaseAuth.instance;
   bool showProgress = false;
-  late String email, password, con_password, errorMes, name;
+  String email ='', password='', con_password='', errorMes='', name='';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -120,38 +120,56 @@ class _RegisterState extends State<Register> {
                       setState(() {
                         showProgress = true;
                       });
-                      if(password == con_password){
-                        try {
-                          final newuser =
-                              await _auth.createUserWithEmailAndPassword(
-                                  email: email.trim(), password: password);
-                          if (newuser != null) {
-                            User? user = newuser.user;
-                            user!.updateDisplayName(name);
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => LoginPage()),
-                            );
+                      if (!(password == ''|| email == ''|| con_password == '' || name == '')){
+                        if (password == con_password) {
+                          try {
+                            final newuser =
+                                await _auth.createUserWithEmailAndPassword(
+                                    email: email.trim(), password: password);
+                            if (newuser != null) {
+                              User? user = newuser.user;
+                              user!.updateDisplayName(name);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => LoginPage()),
+                              );
+                              setState(() {
+                                showProgress = false;
+                              });
+                            }
+                          } on FirebaseAuthException catch (e) {
+                            switch (e.code) {
+                              case 'email-already-in-use':
+                                errorMes = "Email already registered";
+                                break;
+                              case 'weak-password':
+                                errorMes = 'Weak Password';
+                                break;
+                              case 'invalid-email':
+                                errorMes = "Invalid Email entered";
+                                break;
+                              default:
+                                errorMes =
+                                    "An unknown error happened. Please try after sometime";
+                            }
+                            Fluttertoast.showToast(
+                                msg: errorMes,
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.CENTER,
+                                timeInSecForIosWeb: 1,
+                                backgroundColor: Colors.redAccent,
+                                textColor: Colors.white,
+                                fontSize: 16.0);
                             setState(() {
                               showProgress = false;
                             });
+                            print(e.code);
+                          } catch (e) {
+                            print(e);
                           }
-                        } on FirebaseAuthException catch (e) {
-                          switch (e.code) {
-                            case 'email-already-in-use':
-                              errorMes = "Email already registered";
-                              break;
-                            case 'weak-password':
-                              errorMes = 'Weak Password';
-                              break;
-                            case 'invalid-email':
-                              errorMes = "Invalid Email entered";
-                              break;
-                            default:
-                              errorMes =
-                                  "An unknown error happened. Please try after sometime";
-                          }
+                        } else {
+                          errorMes = "Passwords Don't Match";
                           Fluttertoast.showToast(
                               msg: errorMes,
                               toastLength: Toast.LENGTH_SHORT,
@@ -163,13 +181,10 @@ class _RegisterState extends State<Register> {
                           setState(() {
                             showProgress = false;
                           });
-                          print(e.code);
-                        } catch (e) {
-                          print(e);
                         }
                       }
                       else {
-                        errorMes = "Passwords Don't Match";
+                        errorMes = "One or more fields empty";
                         Fluttertoast.showToast(
                             msg: errorMes,
                             toastLength: Toast.LENGTH_SHORT,
